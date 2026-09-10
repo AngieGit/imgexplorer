@@ -1,4 +1,4 @@
-# ImgExplorer
+# <img src="favicon.svg" alt="" width="32" height="32"> ImgExplorer
 
 ImgExplorer is a small localhost teaching workbench for image metadata, pixel inspection, image comparison, and introductory least-significant-bit (LSB) steganography.
 
