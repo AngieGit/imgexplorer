@@ -1,0 +1,2 @@
+[console_scripts]
+imgexplorer = server:main

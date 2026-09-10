@@ -1,0 +1,13 @@
+README.md
+app.js
+favicon.svg
+index.html
+pyproject.toml
+server.py
+styles.css
+imgexplorer.egg-info/PKG-INFO
+imgexplorer.egg-info/SOURCES.txt
+imgexplorer.egg-info/dependency_links.txt
+imgexplorer.egg-info/entry_points.txt
+imgexplorer.egg-info/requires.txt
+imgexplorer.egg-info/top_level.txt

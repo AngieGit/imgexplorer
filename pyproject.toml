@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imgexplorer"
+version = "0.1.0"
+description = "A local image forensics and steganography teaching workbench"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0-or-later" }
+authors = [
+  { name = "ImgExplorer contributors" }
+]
+dependencies = [
+  "Pillow>=10.0",
+  "stegano>=3.0,<4"
+]
+
+[project.urls]
+Homepage = "https://github.com/AngieGit/imgexplorer"
+Repository = "https://github.com/AngieGit/imgexplorer"
+
+[project.scripts]
+imgexplorer = "server:main"
+
+[tool.setuptools]
+py-modules = ["server"]
+include-package-data = true
+
+[tool.setuptools.data-files]
+"share/imgexplorer" = ["index.html", "app.js", "styles.css", "favicon.svg"]

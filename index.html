@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A local image steganography and forensics teaching workbench.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>ImgExplorer | Image forensics workbench</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark">//</span><span>IMGEXPLORER</span></div>
+    <div class="status-line"><span class="pulse"></span><span id="server-status">LOCAL WORKBENCH / CONNECTING</span></div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="eyebrow">IMAGE FORENSICS / FIELD NOTES 01</p>
+      <h1>See what the image<br><em>is saying.</em></h1>
+      <p class="lede">A hands-on lab for inspecting pixels, reading metadata, and making the invisible layer of an image visible.</p>
+    </section>
+
+    <section class="workspace" aria-label="Image workspace">
+      <div class="panel upload-panel">
+        <div class="panel-heading"><span class="index">01</span><h2>Load a specimen</h2></div>
+        <label class="drop-zone" id="drop-zone" for="image-input">
+          <input id="image-input" type="file" accept="image/png,image/jpeg,image/webp">
+          <span class="drop-icon">[ + ]</span>
+          <strong>Drop an image here</strong>
+          <span>or choose a PNG / JPEG / WEBP</span>
+        </label>
+        <div class="file-readout" id="file-readout">No image loaded</div>
+        <div class="tool-status" id="tool-status" aria-live="polite"></div>
+      </div>
+
+      <div class="panel overview-panel">
+        <div class="panel-heading"><span class="index">02</span><h2>Quick overview</h2><span class="live-tag">LIVE</span></div>
+        <div class="stats-grid">
+          <div class="stat"><span>PIXELS</span><strong id="stat-pixels">--</strong></div>
+          <div class="stat"><span>DIMENSIONS</span><strong id="stat-dimensions">--</strong></div>
+          <div class="stat"><span>FORMAT</span><strong id="stat-format">--</strong></div>
+          <div class="stat"><span>FILE SIZE</span><strong id="stat-size">--</strong></div>
+        </div>
+        <div class="channel-list" id="channel-list"><span class="muted">Awaiting image data</span></div>
+      </div>
+
+      <div class="panel metadata-panel">
+        <div class="panel-heading"><span class="index">03</span><h2>Metadata analysis</h2><div class="metadata-actions"><label for="metadata-view">VIEW</label><select id="metadata-view"><option value="table">TABLE</option><option value="json">JSON</option></select><button class="text-button" id="refresh-metadata" disabled>REFRESH</button></div></div>
+        <div class="metadata-table-wrap" id="metadata-table-wrap"><table class="metadata-table" id="metadata-table"><tbody><tr><td colspan="2">Upload an image to run Pillow EXIF extraction</td></tr></tbody></table></div>
+        <pre class="metadata is-hidden" id="metadata-output">Upload an image to run Pillow EXIF extraction</pre>
+      </div>
+
+      <div class="panel matrix-panel">
+        <div class="panel-heading"><span class="index">04</span><h2>Pixel matrix</h2><div class="matrix-controls"><label for="matrix-size">SIZE</label><select id="matrix-size"><option value="8">8 × 8</option><option value="16" selected>16 × 16</option><option value="32">32 × 32</option></select><label for="channel-select">CHANNEL</label><select id="channel-select"><option value="luma">LUMA</option><option value="red">RED</option><option value="green">GREEN</option><option value="blue">BLUE</option></select></div></div>
+        <div class="matrix-meta" id="matrix-meta">Select an image to sample its first 16 × 16 pixels.</div>
+        <div class="matrix-wrap"><table id="pixel-matrix" aria-label="Pixel values"><tbody></tbody></table></div>
+        <div class="compare-panel">
+          <div class="compare-heading"><div><span class="index">OPTIONAL</span><h3>Compare up to three images</h3></div><span id="compare-status">Add a second image to begin</span></div>
+          <div class="compare-actions">
+            <label class="compare-upload" for="compare-input-1">+ ADD IMAGE 2<input id="compare-input-1" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <label class="compare-upload is-disabled" id="compare-label-2" for="compare-input-2">+ ADD IMAGE 3<input id="compare-input-2" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <button class="text-button" id="clear-comparison" disabled>CLEAR</button>
+          </div>
+          <div class="compare-canvases" id="compare-canvases"><div class="compare-empty">Image 1 appears here after upload · comparison previews will appear beside it</div></div>
+          <div class="compare-diff-wrap"><div class="compare-diff-label">DIFFERENCE MAP <span>red = changed pixel / dimension mismatch</span></div><div class="compare-diff-grid"><div class="compare-diff-card"><div class="compare-diff-label">IMAGE 1 ↔ IMAGE 2 <strong class="pair-count" id="pair-count-2">0 pixels affected</strong></div><div class="compare-view-tabs"><button class="compare-view-tab is-active" data-pair="2" data-view="image">VIEW IMAGE</button><button class="compare-view-tab" data-pair="2" data-view="pixels">VIEW PIXELS</button><button class="icon-button pair-zoom" data-pair="2" title="Zoom Image 1 versus Image 2 difference map" aria-label="Zoom Image 1 versus Image 2 difference map">&#128300;</button></div><div class="compare-pair-view" id="compare-image-2"><canvas id="compare-diff-2" aria-label="Image 1 versus Image 2 difference map"></canvas></div><div class="compare-pair-view is-hidden" id="compare-pixels-2"><table class="compare-matrix" id="compare-matrix-2"><tbody></tbody></table></div></div><div class="compare-diff-card is-hidden" id="compare-diff-3-card"><div class="compare-diff-label">IMAGE 1 ↔ IMAGE 3 <strong class="pair-count" id="pair-count-3">0 pixels affected</strong></div><div class="compare-view-tabs"><button class="compare-view-tab is-active" data-pair="3" data-view="image">VIEW IMAGE</button><button class="compare-view-tab" data-pair="3" data-view="pixels">VIEW PIXELS</button><button class="icon-button pair-zoom" data-pair="3" title="Zoom Image 1 versus Image 3 difference map" aria-label="Zoom Image 1 versus Image 3 difference map">&#128300;</button></div><div class="compare-pair-view" id="compare-image-3"><canvas id="compare-diff-3" aria-label="Image 1 versus Image 3 difference map"></canvas></div><div class="compare-pair-view is-hidden" id="compare-pixels-3"><table class="compare-matrix" id="compare-matrix-3"><tbody></tbody></table></div></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stego-section">
+      <div class="section-title"><p class="eyebrow">EXPERIMENT / LSB CHANNEL</p><h2>Hide a message.<br><em>Watch the change.</em></h2></div>
+      <div class="stego-grid">
+        <div class="panel stego-input-panel">
+          <div class="panel-heading"><span class="index">05</span><h2>Encode data</h2></div>
+          <p class="panel-note">Send text or a file to stegano. The payload is wrapped with its filename and MIME type so the decoder can restore it locally.</p>
+          <div class="data-mode"><label class="field-label" for="data-type">DATA TYPE</label><select id="data-type"><option value="text">TEXT</option><option value="file">FILE</option></select></div>
+          <div id="text-input-wrap"><label class="field-label" for="secret-message">SECRET MESSAGE</label><textarea id="secret-message" maxlength="800" placeholder="Type a classroom-safe message..."></textarea></div>
+          <div id="file-input-wrap" class="is-hidden"><label class="field-label" for="payload-file">PAYLOAD FILE</label><input id="payload-file" type="file"></div>
+          <div class="encode-row"><button class="primary-button" id="encode-button" disabled>ENCODE + COMPARE <span>→</span></button><span id="capacity-readout">Capacity: --</span></div>
+          <div class="decode-box"><div class="field-label">DECODE DATA</div><div class="decode-row"><select id="decode-target"><option value="1">IMAGE 1 / COVER</option><option value="2" disabled>IMAGE 2</option><option value="3" disabled>IMAGE 3</option><option value="encoded">ENCODED OUTPUT</option></select><button class="text-button" id="decode-button" disabled>DECODE</button></div><pre id="decoded-output">Choose an image and decode a stegano payload.</pre><a id="decoded-download" class="text-button is-hidden" download>DOWNLOAD DECODED FILE</a></div>
+          <div class="tool-callout"><span class="tool-dot"></span><div><strong>stegano / LSB</strong><p>Python-backed encoding and decoding for a transparent classroom experiment. Compare the cover and output pixels below.</p></div></div>
+        </div>
+        <div class="panel diff-panel">
+          <div class="panel-heading"><span class="index">06</span><h2>Affected pixels</h2><div class="heading-actions"><button class="text-button" id="zoom-button" disabled>ZOOM <span>+</span></button><button class="text-button" id="download-button" disabled>DOWNLOAD PNG</button></div></div>
+          <div class="view-tabs" role="tablist"><button class="view-tab is-active" id="view-image-tab" role="tab" aria-selected="true">VIEW IMAGE</button><button class="view-tab" id="view-pixels-tab" role="tab" aria-selected="false">VIEW PIXELS</button></div>
+          <div class="affected-view" id="affected-image-view"><div class="canvas-stage" id="canvas-stage"><div class="empty-canvas">Encoded comparison will appear here.</div></div></div>
+          <div class="affected-view is-hidden" id="affected-pixels-view"><div class="affected-matrix-meta" id="affected-matrix-meta">Encode a message to inspect changed pixel values.</div><div class="affected-matrix-wrap"><table id="affected-matrix" aria-label="Affected pixel values"><tbody></tbody></table></div></div>
+          <div class="diff-legend"><span><i class="legend-original"></i> unchanged</span><span><i class="legend-changed"></i> changed LSB</span><strong id="changed-count">0 pixels changed</strong></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><span>© 2026 ImgExplorer contributors · <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0-or-later</a> · <a href="https://github.com/AngieGit/imgexplorer">GitHub</a></span><span>All analysis runs locally — evidence never leaves your machine.</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>
