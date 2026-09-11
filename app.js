@@ -303,14 +303,22 @@ async function decodeData() {
     file = await new Promise((resolve) => state.encodedCanvas.toBlob(resolve, 'image/png'));
   } else if (target === '1') file = state.file;
   else file = state.comparison[Number(target) - 2]?.file;
-  if (!file) { $('decoded-output').textContent = 'Load the selected image first.'; return; }
-  $('decoded-output').textContent = 'Decoding with stegano...'; $('decoded-download').classList.add('is-hidden');
-  const response = await fetch('/api/stegano', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'decode', image: arrayBufferToBase64(await file.arrayBuffer()) }) });
-  const result = await response.json();
-  if (!result.ok) { $('decoded-output').textContent = result.error || 'No payload found'; return; }
-  if (result.kind === 'file') {
-    const link = $('decoded-download'); link.href = `data:${result.mime};base64,${result.data}`; link.download = result.name; link.textContent = `DOWNLOAD ${result.name}`; link.classList.remove('is-hidden'); $('decoded-output').textContent = `Decoded file: ${result.name} (${result.mime})`;
-  } else $('decoded-output').textContent = result.text || '(empty text payload)';
+  await decodeFile(file, $('decoded-output'), $('decoded-download'));
+}
+
+async function decodeFile(file, output, download) {
+  if (!file) { output.textContent = 'Choose an image file first.'; return; }
+  output.textContent = 'Decoding with stegano...'; download.classList.add('is-hidden');
+  try {
+    const response = await fetch('/api/stegano', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'decode', image: arrayBufferToBase64(await file.arrayBuffer()) }) });
+    const result = await response.json();
+    if (!response.ok || !result.ok) { output.textContent = result.error || `Decode request failed (${response.status})`; return; }
+    if (result.kind === 'file') {
+      const link = download; link.href = `data:${result.mime};base64,${result.data}`; link.download = result.name; link.textContent = `DOWNLOAD ${result.name}`; link.classList.remove('is-hidden'); output.textContent = `Decoded file: ${result.name} (${result.mime})`;
+    } else output.textContent = result.text || '(empty text payload)';
+  } catch (error) {
+    output.textContent = `Decode failed: ${error.message}. Is server.py running?`;
+  }
 }
 
 function updateDataType() {
