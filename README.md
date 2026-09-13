@@ -2,6 +2,17 @@
 
 ImgExplorer is a small localhost teaching workbench for image metadata, pixel inspection, image comparison, and introductory least-significant-bit (LSB) steganography.
 
+## Note on AI Assisted Development
+
+This software was developed with the assistance of **GitHub Copilot** to support classroom discussions and hands-on learning around **image analysis, including metadata extraction and steganography**. These tools helped accelerate development and improve development velocity.
+
+This project is still under active development and should be considered **alpha-level software at best**. It has not yet undergone comprehensive testing, and bugs or unexpected behaviour may still be present.
+
+If you encounter any issues or identify potential flaws, please feel free to submit an **issue or pull request** with your findings and, where possible, proposed fixes.
+
+Following thorough **end-to-end testing and validation**, a stable release will be published.
+
+
 ## Run it
 
 ### From the repository
@@ -62,6 +73,7 @@ Do not expose this development server to an untrusted network. Image bytes are p
 
 - Metadata functionality uses **Pillow**, the friendly Python Imaging Library.
 - Steganography functionality uses **stegano**, an open-source Python steganography library built around LSB techniques.
+- [Anant Shrivastava](https://github.com/anantshri) for suggested enhancements.
 
 ## Project
 
